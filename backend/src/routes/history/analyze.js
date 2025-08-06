@@ -12,6 +12,7 @@ router.get('/', isLoggedIn, async (req, res) => {
         const query = `
        SELECT 
         h.id AS history_id,
+        r.id AS resume_id,
         r.title AS resume_title,
         r.ai_score,
         h.created_at,
@@ -60,14 +61,9 @@ router.post('/reanalyze', isLoggedIn, async (req, res) => {
 router.delete('/delete', isLoggedIn, async (req, res) => {
   try {
     const { historyId } = req.body;
-    const userId = req.user.id; // pulled from middleware
 
-    const result = await pool.query(
-      `DELETE FROM history 
-       WHERE id = $1 AND user_id = $2 
-       RETURNING *`,
-      [historyId, userId]
-    );
+
+    const result = await pool.query('DELETE FROM history WHERE id = $1', [historyId]);
 
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'History entry not found or unauthorized' });
