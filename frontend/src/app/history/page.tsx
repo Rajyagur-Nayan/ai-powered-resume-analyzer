@@ -100,18 +100,13 @@ export default function App() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/profile", {
-          withCredentials: true, // include cookies
+        const res = await fetch("http://localhost:4000/profile", {
+          credentials: "include", // include cookies
         });
-<<<<<<< HEAD
-        setProfile(res.data); // assuming { name: 'John', email: 'john@example.com' }
-=======
         if (!res.ok) throw new Error("Failed to load profile");
-
         const data = await res.json();
-        console.log(res)
+        console.log(res);
         setProfile(data); // assuming response = { name: 'John', email: 'john@example.com' }
->>>>>>> 46fe9876d5c1fd0c9acb1c041eda6a53513f0e50
       } catch (err) {
         console.error("Error fetching profile:", err);
       }
