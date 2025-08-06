@@ -17,9 +17,10 @@ router.post("/", upload.single("resume"), isLoggedIn, async (req, res) => {
     try {
         const userId = req.user.id;
         const file = req.file;
+        const { jobDescription } = req.body
 
-        if (!file) {
-            return res.status(400).json({ error: "Resume file is required." });
+        if (!file || !jobDescription) {
+            return res.status(400).json({ error: "Resume file and job description is required." });
         }
         if (!userId) {
             return res.status(400).json({ error: "You are not logged in." });
@@ -29,9 +30,6 @@ router.post("/", upload.single("resume"), isLoggedIn, async (req, res) => {
         const buffer = fs.readFileSync(file.path);
         const pdfData = await pdfParse(buffer);
         const resumeText = pdfData.text;
-
-        // Create a generic job description (or pick a default one)
-        const jobDescription = "Frontend Developer with skills in React, JavaScript, HTML, CSS, Git, and Responsive Design.";
 
         // Generate prompt + get Gemini response
         const prompt = generatePrompt(resumeText, jobDescription);
