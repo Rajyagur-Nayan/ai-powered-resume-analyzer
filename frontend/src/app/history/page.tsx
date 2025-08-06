@@ -14,6 +14,7 @@ import { Settings, FileText, ArrowRight, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { useAuth } from "../pages/auth/AuthContext";
+import Link from "next/link";
 
 // Define interfaces for type safety
 interface Activity {
@@ -24,11 +25,10 @@ interface Activity {
 }
 
 interface Analysis {
-  id: number;
-  title: string;
-  date: string;
-  time: string;
-  score: number;
+  history_id: number;
+  resume_title: string;
+  created_at: string;
+  ai_score: number;
 }
 
 interface User {
@@ -88,7 +88,7 @@ export default function App() {
   // Delete handler function
   const handleDelete = (id: number) => {
     setAnalysisHistory(
-      analysisHistory.filter((analysis) => analysis.id !== id)
+      analysisHistory.filter((analysis) => analysis.history_id !== id)
     );
   };
 
@@ -302,7 +302,7 @@ export default function App() {
               <p className="text-red-500">Error: {error}</p>
             ) : (
               analysisHistory.map((analysis) => (
-                <motion.div key={analysis.id} variants={cardVariants}>
+                <motion.div key={analysis.history_id} variants={cardVariants}>
                   <Card
                     className={`rounded-xl shadow-md p-4 md:p-6 flex flex-col h-full ${
                       darkMode
@@ -315,18 +315,18 @@ export default function App() {
                         darkMode ? "text-gray-50" : "text-gray-800"
                       }`}
                     >
-                      {analysis.title}
+                      {analysis.resume_title}
                     </CardTitle>
                     <div
                       className={`text-sm ${
                         darkMode ? "text-gray-400" : "text-gray-600"
                       } mb-4`}
                     >
-                      {analysis.date} {analysis.time}
+                      {analysis.created_at}
                     </div>
                     <div className="flex items-center mb-4">
                       <Progress
-                        value={analysis.score}
+                        value={analysis.ai_score}
                         className={`h-2 flex-1 ${
                           darkMode
                             ? "bg-gray-700 [&>*]:bg-blue-500"
@@ -338,24 +338,24 @@ export default function App() {
                           darkMode ? "text-blue-400" : "text-blue-600"
                         }`}
                       >
-                        {analysis.score}%
+                        {analysis.ai_score}%
                       </span>
                     </div>
                     <div className="flex space-x-2 mt-auto">
-                      <Button
-                        variant="outline"
-                        className={`flex-1 ${
+                      <Link
+                        href="/analysis"
+                        className={`flex text-sm  md:px-4 md:py-2 px-5 py-2 rounded-xl items-center justify-center cursor-pointer ${
                           darkMode
                             ? "bg-gray-700 text-gray-50 border-gray-600 hover:bg-gray-600"
                             : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
                         }`}
                       >
                         Reanalyze
-                      </Button>
+                      </Link>
                       <Button
                         variant="destructive"
-                        className="flex-1 bg-red-500 text-white hover:bg-red-600"
-                        onClick={() => handleDelete(analysis.id)}
+                        className="flex-1 bg-red-500 text-white hover:bg-red-600 cursor-pointer"
+                        onClick={() => handleDelete(analysis.history_id)}
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
                         Delete
