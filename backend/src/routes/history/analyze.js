@@ -124,8 +124,12 @@ router.delete('/delete', isLoggedIn, async (req, res) => {
   try {
     const { historyId } = req.body;
 
-
-    const result = await pool.query('DELETE FROM history WHERE id = $1', [historyId]);
+    const result = await pool.query(`WITH deleted_history AS (
+        DELETE FROM history
+        WHERE id = $1
+        RETURNING resume_id)
+        DELETE FROM resumes
+        WHERE id IN(SELECT resume_id FROM deleted_history);`, [historyId]);
 
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'History entry not found or unauthorized' });
