@@ -13,6 +13,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { UploadCloud } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const Analysis = () => {
   const [jobDescription, setJobDescription] = useState("");
@@ -20,6 +21,7 @@ const Analysis = () => {
   const [loading, setLoading] = useState(false);
   const [matchScore, setMatchScore] = useState<number | null>(null);
   const [keywords, setKeywords] = useState<string[]>([]);
+  const [MatchedKeywords, setMatchedKeywords] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -79,6 +81,7 @@ const Analysis = () => {
       console.log(data.keywords);
       setMatchScore(data.ai_score || 0);
       setKeywords(data.keywords.missing || []);
+      setMatchedKeywords(data.keywords.matched || []);
       setSuggestions(data.suggestions || []);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
@@ -209,11 +212,20 @@ const Analysis = () => {
               </CardHeader>
               <CardContent className="p-6 text-gray-300">
                 {keywords.length > 0 ? (
-                  <ul className="list-disc ml-6 space-y-1">
-                    {keywords.map((word, i) => (
-                      <li key={i}>{word}</li>
-                    ))}
-                  </ul>
+                  <div>
+                    <Label className="mb-3">Matched key words</Label>
+                    <ul className="list-disc ml-6 mb-10 space-y-1">
+                      {MatchedKeywords.map((word, i) => (
+                        <li key={i}>{word}</li>
+                      ))}
+                    </ul>
+                    <Label className="mb-3">Missing key words</Label>
+                    <ul className="list-disc ml-6 space-y-1">
+                      {keywords.map((word, i) => (
+                        <li key={i}>{word}</li>
+                      ))}
+                    </ul>
+                  </div>
                 ) : (
                   <p>No keywords yet...</p>
                 )}

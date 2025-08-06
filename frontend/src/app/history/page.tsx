@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { useAuth } from "../pages/auth/AuthContext";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 // Define interfaces for type safety
 interface Activity {
@@ -65,6 +66,26 @@ export default function App() {
   const [analysisHistory, setAnalysisHistory] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [profile, setProfile] = useState<{
+    name: string;
+    email: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/profile");
+        if (!res.ok) throw new Error("Failed to load profile");
+
+        const data = await res.json();
+        setProfile(data); // assuming response = { name: 'John', email: 'john@example.com' }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -86,10 +107,24 @@ export default function App() {
   const { logout } = useAuth();
 
   // Delete handler function
-  const handleDelete = (id: number) => {
-    setAnalysisHistory(
-      analysisHistory.filter((analysis) => analysis.history_id !== id)
-    );
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:4000/history/delete`, {
+        method: "DELETE", // or use "DELETE" based on your backend
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ historyId: id }),
+      });
+      if (!response.ok) throw new Error("Failed to delete history");
+      toast.success("History deleted successfully!");
+      setAnalysisHistory((prev) =>
+        prev.filter((analysis) => analysis.history_id !== id)
+      );
+    } catch (err) {
+      console.error("Delete failed:", err);
+      toast.error("Failed to delete history");
+    }
   };
 
   const cardVariants = {
@@ -149,15 +184,13 @@ export default function App() {
                   <AvatarFallback>{avatarFallback}</AvatarFallback>
                 </Avatar>
                 <div className="text-center sm:text-left">
-                  <p className="text-xl font-semibold">
-                    {user.firstName} {user.lastName}
-                  </p>
+                  <p className="text-xl font-semibold">{profile?.name}</p>
                   <p
                     className={`text-base ${
                       darkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    Product Manager
+                    {profile?.email}
                   </p>
                 </div>
                 <Dialog>
