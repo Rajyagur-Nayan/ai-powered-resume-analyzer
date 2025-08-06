@@ -31,14 +31,14 @@ router.post("/", async (req, res) => {
             return res.status(400).json({ error: "Wrong password" });
         }
 
-        const data = { id: user.id, name: user.name};
+        const data = { id: user.id, name: user.name };
         const token = generateToken(data);
         res
             .status(200)
             .cookie("login_token", token, {
                 httpOnly: false,
-                sameSite: "None",
-                secure: true,
+                sameSite: "Lax",
+                secure: false,
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             })
             .json({ message: "Login successful", token, user: data });
