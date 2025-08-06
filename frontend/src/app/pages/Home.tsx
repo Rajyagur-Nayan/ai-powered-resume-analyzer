@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -15,11 +15,24 @@ import {
   Award,
   Users,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import axios from "axios";
 
 // Main App Component
 export const Home = () => {
+  useEffect(() => {
+    const fetchWelcome = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/");
+        console.log("Welcome message:", response.data);
+      } catch (error) {
+        console.error("Error fetching welcome message:", error);
+      }
+    };
+
+    fetchWelcome();
+  }, []);
+
   return (
     // The main container for the application, setting dark mode and Inter font
     <div className="min-h-screen bg-gray-950 text-gray-50 font-inter dark">

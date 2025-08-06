@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { UploadCloud } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios from "axios";
 
 const Analysis = () => {
   const [jobDescription, setJobDescription] = useState("");
@@ -71,6 +72,7 @@ const Analysis = () => {
       const res = await fetch("http://localhost:4000/analyze", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
 
       if (!res.ok) {
