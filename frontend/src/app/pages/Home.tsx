@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { motion } from "framer-motion";
 import {
@@ -15,9 +16,10 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 // Main App Component
-const Home = () => {
+export const Home = () => {
   return (
     // The main container for the application, setting dark mode and Inter font
     <div className="min-h-screen bg-gray-950 text-gray-50 font-inter dark">
@@ -44,16 +46,19 @@ const Home = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg shadow-lg transition-all duration-300">
+          <Link
+            href="/analysis"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg shadow-lg transition-all duration-300"
+          >
             Get Started
-          </Button>
+          </Link>
         </motion.div>
         {/* Placeholder for the resume image */}
         <motion.img
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          src="https://placehold.co/300x200/2d3748/a0aec0?text=Resume+Image"
+          src="/img1.jpeg"
           alt="Resume illustration"
           className="mt-12 rounded-lg shadow-xl"
         />
@@ -232,5 +237,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;
