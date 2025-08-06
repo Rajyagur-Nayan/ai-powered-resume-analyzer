@@ -54,7 +54,7 @@ const Analysis = () => {
   };
 
   const handleAnalyze = async () => {
-    if (!selectedFile) {
+    if (!selectedFile || !jobDescription.trim()) {
       setError("Please upload a resume ");
       return;
     }
@@ -64,10 +64,9 @@ const Analysis = () => {
       setError(null);
 
       const formData = new FormData();
-      console.log(selectedFile);
-
       formData.append("resume", selectedFile);
-      const res = await fetch("http://locahost:4000/analyz", {
+      formData.append("jobDescription", jobDescription);
+      const res = await fetch("http://localhost:4000/analyze", {
         method: "POST",
         body: formData,
       });
@@ -77,8 +76,9 @@ const Analysis = () => {
       }
 
       const data = await res.json();
-      setMatchScore(data.score || 0);
-      setKeywords(data.keywords || []);
+      console.log(data.keywords);
+      setMatchScore(data.ai_score || 0);
+      setKeywords(data.keywords.missing || []);
       setSuggestions(data.suggestions || []);
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
