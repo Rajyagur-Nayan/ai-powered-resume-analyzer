@@ -57,12 +57,7 @@ const Navbar = () => {
             >
               History
             </Link>
-            <Link
-              href="/profile"
-              className="text-gray-300 hover:text-purple-400 transition-colors"
-            >
-              Profile
-            </Link>
+
             {/* User Avatar Placeholder */}
             {isAuthenticated ? (
               <Button onClick={logout} className="bg-red-600 hover:bg-red-700">
@@ -142,12 +137,7 @@ const Navbar = () => {
             >
               History
             </Link>
-            <Link
-              href="/profile"
-              className="block text-gray-300 hover:text-purple-400 transition-colors py-2"
-            >
-              Profile
-            </Link>
+
             <div className="flex flex-col space-y-2 mt-4">
               {isAuthenticated ? (
                 <Button

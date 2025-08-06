@@ -1,6 +1,5 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -11,16 +10,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Settings, FileText, ArrowRight, Trash2, Sun, Moon } from "lucide-react";
+import { Settings, FileText, ArrowRight, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
+import { useAuth } from "../pages/auth/AuthContext";
 
 // Define interfaces for type safety
 interface Activity {
   type: string;
   title: string;
   details: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
 }
 
 interface Analysis {
@@ -53,66 +53,6 @@ const recentActivity: Activity[] = [
   },
 ];
 
-// Initial analysis history data
-const initialAnalysisHistory: Analysis[] = [
-  {
-    id: 1,
-    title: "Software Engineer Resume v3",
-    date: "2024-07-20",
-    time: "14:30",
-    score: 88,
-  },
-  {
-    id: 2,
-    title: "Product Manager Resume",
-    date: "2024-07-18",
-    time: "10:15",
-    score: 75,
-  },
-  {
-    id: 3,
-    title: "Marketing Specialist Portfolio",
-    date: "2024-07-15",
-    time: "09:00",
-    score: 92,
-  },
-  {
-    id: 4,
-    title: "Data Analyst Resume v2",
-    date: "2024-07-12",
-    time: "16:45",
-    score: 68,
-  },
-  {
-    id: 5,
-    title: "UI/UX Designer Resume",
-    date: "2024-07-10",
-    time: "11:00",
-    score: 81,
-  },
-  {
-    id: 6,
-    title: "Cybersecurity Analyst Resume",
-    date: "2024-07-08",
-    time: "13:20",
-    score: 79,
-  },
-  {
-    id: 7,
-    title: "Sales Lead Resume",
-    date: "2024-07-05",
-    time: "17:00",
-    score: 91,
-  },
-  {
-    id: 8,
-    title: "Financial Advisor Resume",
-    date: "2024-07-03",
-    time: "10:40",
-    score: 83,
-  },
-];
-
 // Mock user data (replace with real user data from your auth system)
 const user: User = {
   firstName: "Alex",
@@ -121,27 +61,35 @@ const user: User = {
 };
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState<boolean>(true);
-  const [analysisHistory, setAnalysisHistory] =
-    useState<Analysis[]>(initialAnalysisHistory);
+  const [darkMode] = useState<boolean>(true);
+  const [analysisHistory, setAnalysisHistory] = useState<Analysis[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
+    const fetchHistory = async () => {
+      try {
+        const response = await fetch("http://localhost:4000/history");
+        if (!response.ok) throw new Error("Failed to fetch history");
+        const data = await response.json();
+        setAnalysisHistory(data);
+      } catch (err: any) {
+        setError(err.message || "Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHistory();
+  }, []);
+
+  const { logout } = useAuth();
 
   // Delete handler function
   const handleDelete = (id: number) => {
-    setAnalysisHistory(analysisHistory.filter((analysis) => analysis.id !== id));
-  };
-
-  // Logout handler (placeholder, implement your logout logic here)
-  const handleLogout = () => {
-    console.log("User logged out");
-    // Add your logout logic here, e.g., clear auth tokens, redirect to login page
+    setAnalysisHistory(
+      analysisHistory.filter((analysis) => analysis.id !== id)
+    );
   };
 
   const cardVariants = {
@@ -158,73 +106,12 @@ export default function App() {
         darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-800"
       } font-sans flex flex-col`}
     >
-      {/* Top Header */}
-      <header
-        className={`sticky top-0 z-50 ${
-          darkMode ? "bg-gray-800 shadow-xl" : "bg-white shadow-sm"
-        }`}
-      >
-        <nav className="mx-auto flex flex-col sm:flex-row max-w-full items-center justify-between p-4 px-4 sm:px-8">
-          <div className="flex items-center space-x-2 text-xl font-bold mb-2 sm:mb-0">
-            <span className="text-blue-500">::</span>
-            <span>logo</span>
-          </div>
-          <div className="flex flex-wrap justify-center sm:justify-end items-center space-x-4 sm:space-x-6">
-            <a
-              href="#"
-              className={`text-sm font-medium ${
-                darkMode
-                  ? "text-gray-300 hover:text-white"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Home
-            </a>
-            <a
-              href="#"
-              className={`text-sm font-medium ${
-                darkMode
-                  ? "text-gray-300 hover:text-white"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Analysis
-            </a>
-            <a
-              href="#"
-              className={`text-sm font-medium ${
-                darkMode
-                  ? "text-blue-400 border-b-2 border-blue-400"
-                  : "text-blue-500 border-b-2 border-blue-500"
-              }`}
-            >
-              Profile/History
-            </a>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setDarkMode(!darkMode)}
-              className={`${
-                darkMode ? "text-gray-300 hover:bg-gray-700" : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-            <Avatar className="ml-2">
-              <AvatarImage
-                src="https://placehold.co/40x40/e2e8f0/64748b?text=JD"
-                alt="User Profile"
-              />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-          </div>
-        </nav>
-      </header>
-
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col">
         <main className="flex-1 p-4 md:p-8 overflow-y-auto max-w-7xl mx-auto w-full">
-          <h1 className="text-3xl md:text-4xl font-bold mb-8">Profile & History</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-8">
+            Profile & History
+          </h1>
 
           {/* User Information Section */}
           <motion.div
@@ -289,7 +176,9 @@ export default function App() {
                   </DialogTrigger>
                   <DialogContent
                     className={`${
-                      darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-800"
+                      darkMode
+                        ? "bg-gray-800 text-gray-100"
+                        : "bg-white text-gray-800"
                     }`}
                   >
                     <DialogHeader>
@@ -317,7 +206,7 @@ export default function App() {
                       </div>
                       <Button
                         variant="destructive"
-                        onClick={handleLogout}
+                        onClick={logout}
                         className="w-full max-w-xs bg-red-500 text-white hover:bg-red-600"
                       >
                         Logout
@@ -330,7 +219,9 @@ export default function App() {
           </motion.div>
 
           {/* Recent Activity Section */}
-          <h2 className="text-2xl md:text-3xl font-bold mb-6">Recent Activity</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-6">
+            Recent Activity
+          </h2>
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
             initial="hidden"
@@ -390,7 +281,9 @@ export default function App() {
           </motion.div>
 
           {/* Analysis History Section */}
-          <h2 className="text-2xl md:text-3xl font-bold mb-6">Analysis History</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-6">
+            Analysis History
+          </h2>
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
             initial="hidden"
@@ -403,67 +296,75 @@ export default function App() {
               },
             }}
           >
-            {analysisHistory.map((analysis) => (
-              <motion.div key={analysis.id} variants={cardVariants}>
-                <Card
-                  className={`rounded-xl shadow-md p-4 md:p-6 flex flex-col h-full ${
-                    darkMode ? "bg-gray-800 border border-gray-700" : "bg-white"
-                  }`}
-                >
-                  <CardTitle
-                    className={`text-lg font-semibold mb-2 ${
-                      darkMode ? "text-gray-50" : "text-gray-800"
+            {loading ? (
+              <p className="text-gray-400">Loading history...</p>
+            ) : error ? (
+              <p className="text-red-500">Error: {error}</p>
+            ) : (
+              analysisHistory.map((analysis) => (
+                <motion.div key={analysis.id} variants={cardVariants}>
+                  <Card
+                    className={`rounded-xl shadow-md p-4 md:p-6 flex flex-col h-full ${
+                      darkMode
+                        ? "bg-gray-800 border border-gray-700"
+                        : "bg-white"
                     }`}
                   >
-                    {analysis.title}
-                  </CardTitle>
-                  <div
-                    className={`text-sm ${
-                      darkMode ? "text-gray-400" : "text-gray-600"
-                    } mb-4`}
-                  >
-                    {analysis.date} {analysis.time}
-                  </div>
-                  <div className="flex items-center mb-4">
-                    <Progress
-                      value={analysis.score}
-                      className={`h-2 flex-1 ${
-                        darkMode
-                          ? "bg-gray-700 [&>*]:bg-blue-500"
-                          : "bg-gray-200 [&>*]:bg-blue-500"
-                      }`}
-                    />
-                    <span
-                      className={`ml-3 text-sm font-semibold ${
-                        darkMode ? "text-blue-400" : "text-blue-600"
+                    <CardTitle
+                      className={`text-lg font-semibold mb-2 ${
+                        darkMode ? "text-gray-50" : "text-gray-800"
                       }`}
                     >
-                      {analysis.score}%
-                    </span>
-                  </div>
-                  <div className="flex space-x-2 mt-auto">
-                    <Button
-                      variant="outline"
-                      className={`flex-1 ${
-                        darkMode
-                          ? "bg-gray-700 text-gray-50 border-gray-600 hover:bg-gray-600"
-                          : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
-                      }`}
+                      {analysis.title}
+                    </CardTitle>
+                    <div
+                      className={`text-sm ${
+                        darkMode ? "text-gray-400" : "text-gray-600"
+                      } mb-4`}
                     >
-                      Reanalyze
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      className="flex-1 bg-red-500 text-white hover:bg-red-600"
-                      onClick={() => handleDelete(analysis.id)}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </Button>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
+                      {analysis.date} {analysis.time}
+                    </div>
+                    <div className="flex items-center mb-4">
+                      <Progress
+                        value={analysis.score}
+                        className={`h-2 flex-1 ${
+                          darkMode
+                            ? "bg-gray-700 [&>*]:bg-blue-500"
+                            : "bg-gray-200 [&>*]:bg-blue-500"
+                        }`}
+                      />
+                      <span
+                        className={`ml-3 text-sm font-semibold ${
+                          darkMode ? "text-blue-400" : "text-blue-600"
+                        }`}
+                      >
+                        {analysis.score}%
+                      </span>
+                    </div>
+                    <div className="flex space-x-2 mt-auto">
+                      <Button
+                        variant="outline"
+                        className={`flex-1 ${
+                          darkMode
+                            ? "bg-gray-700 text-gray-50 border-gray-600 hover:bg-gray-600"
+                            : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
+                        }`}
+                      >
+                        Reanalyze
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        className="flex-1 bg-red-500 text-white hover:bg-red-600"
+                        onClick={() => handleDelete(analysis.id)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </Button>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))
+            )}
           </motion.div>
         </main>
       </div>
