@@ -23,7 +23,11 @@ app.get("/", (req, res) => {
 
 app.use("/signup", require("./src/routes/user/signup.js"));
 app.use("/login", require("./src/routes/user/login.js"));
+<<<<<<< HEAD
 app.use("/history", require("./src/routes/history/analyze.js"))
 app.use("/profile" , require("./src/routes/profile/profile.js"))
+=======
+app.use("/analyze", require("./src/routes/analyzer/analyze.js"));
+>>>>>>> 00b435d793c19e6f8a751a549ebdc0d6d378a0e1
 
 module.exports = app;
