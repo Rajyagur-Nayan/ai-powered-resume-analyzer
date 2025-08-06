@@ -1,15 +1,25 @@
 
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const pool = require('../../connections/DB.connect');
-const isLoggedIn = require('../../middelwear/login');
+const multer = require("multer");
+const pdfParse = require("pdf-parse");
+const fs = require("fs");
+const path = require("path");
+const isLoggedIn = require('../../middelwear/login.js')
+
+const pool = require("../../connections/DB.connect.js"); // PostgreSQL pool
+const getGeminiResponse = require("../../controllers/gemini.js");
+const generatePrompt = require("../../controllers/prompt.js");
+
+// File upload config
+const upload = multer({ dest: "uploads/" });
 
 // Get analyze history with resume details
 router.get('/', isLoggedIn, async (req, res) => {
-    try {
+  try {
     const userId = req.user.id;
 
-        const query = `
+    const query = `
        SELECT 
         h.id AS history_id,
         r.id AS resume_id,
@@ -23,58 +33,93 @@ router.get('/', isLoggedIn, async (req, res) => {
       ORDER BY h.created_at DESC
     `;
 
-        const { rows } = await pool.query(query, [userId]);
-        res.status(200).json(rows);
-    } catch (error) {
-        console.error('Error fetching analyze history:', error);
-        res.status(500).json({ error: 'Failed to fetch analyze history' });
-    }
-});
-
-router.post('/reanalyze', isLoggedIn, async (req, res) => {
-  try {
-    const { resumeId } = req.body;
-    const userId = req.user.id;
-
-    const newScore = Math.floor(Math.random() * 21) + 80;
-
-    await pool.query(`
-      UPDATE resumes
-      SET ai_score = $1
-      WHERE id = $2 AND user_id = $3
-    `, [newScore, resumeId, userId]);
-
-    await pool.query(`
-      INSERT INTO history (user_id, resume_id, action)
-      VALUES ($1, $2, 'reanalyze')
-    `, [userId, resumeId]);
-
-    res.status(200).json({ message: 'Resume reanalyzed', score: newScore });
-  } catch (err) {
-    console.error('Error reanalyzing resume:', err);
-    res.status(500).json({ error: 'Failed to reanalyze' });
-  }
-});
-
-
-
-router.delete('/delete', isLoggedIn, async (req, res) => {
-  try {
-    const { historyId } = req.body;
-
-
-    const result = await pool.query('DELETE FROM history WHERE id = $1', [historyId]);
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'History entry not found or unauthorized' });
-    }
-
-    res.status(200).json({ message: 'History entry deleted' });
+    const { rows } = await pool.query(query, [userId]);
+    res.status(200).json(rows);
   } catch (error) {
-    console.error('Error deleting history:', error);
-    res.status(500).json({ error: 'Failed to delete history entry' });
+    console.error('Error fetching analyze history:', error);
+    res.status(500).json({ error: 'Failed to fetch analyze history' });
   }
 });
+
+router.post('/reanalyze', upload.single("resume"), isLoggedIn, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const file = req.file;
+    const { oldResumeId } = req.body;
+
+    if (!file) {
+      return res.status(400).json({ error: "Resume file is required." });
+    }
+    if (!userId) {
+      return res.status(400).json({ error: "You are not logged in." });
+    }
+    if (!oldResumeId) {
+      return res.status(400).json({ error: "old resume id is not given" });
+    }
+
+    await pool.query('DELETE FROM history WHERE resume_id = $1'[oldResumeId])
+    await pool.query('DELETE FROM resumes WHERE id = $1'[oldResumeId])
+
+    // Extract resume text
+    const buffer = fs.readFileSync(file.path);
+    const pdfData = await pdfParse(buffer);
+    const resumeText = pdfData.text;
+
+    // Create a generic job description (or pick a default one)
+    const jobDescription = "Frontend Developer with skills in React, JavaScript, HTML, CSS, Git, and Responsive Design.";
+
+    // Generate prompt + get Gemini response
+    const prompt = generatePrompt(resumeText, jobDescription);
+    const rawResponse = await getGeminiResponse(prompt);
+    const cleanResponse = rawResponse.trim().replace(/```json|```/g, "");
+
+    const { score, keywords, suggestions } = JSON.parse(cleanResponse);
+
+    // Auto-generate a title from resume (optional fallback)
+    const title = file.originalname.replace(/\.pdf$/, "");
+
+    // Save resume in DB
+    const fileUrl = `/uploads/${file.filename}`;
+    const insertQuery = `
+      INSERT INTO resumes (user_id, title, file_url, job_description, ai_score, keywords, suggestions)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING id
+    `;
+
+    const result = await pool.query(insertQuery, [
+      userId,
+      title,
+      fileUrl,
+      jobDescription,
+      score,
+      keywords,
+      suggestions.join("\n"),
+    ]);
+
+    const resumeId = result.rows[0].id;
+
+    // Log action in history
+    await pool.query(
+      `INSERT INTO history (user_id, resume_id, action) VALUES ($1, $2, $3)`,
+      [userId, resumeId, "analyze"]
+    );
+
+    // Clean up uploaded file
+    fs.unlinkSync(file.path);
+
+    return res.json({
+      resumeId,
+      ai_score: score,
+      keywords,
+      suggestions,
+    });
+
+  } catch (err) {
+    console.error("Error analyzing resume:", err.message);
+    return res.status(500).json({ error: "Internal server error." });
+  }
+});
+
 
 
 
