@@ -6,7 +6,7 @@ const isLoggedIn = async (req, res, next) => {
         const token = req.cookies.login_token;
 
         if (!token) {
-            return res.status(401).json({ message: 'Login required. Token not found.' });
+            return res.status(410).json({ message: 'Login required. Token not found.' });
         }
 
         // Decode token
