@@ -3,11 +3,10 @@ const pool = require('../connections/DB.connect.js');
 
 const isLoggedIn = async (req, res, next) => {
     try {
-        // const token = req.cookies.login_token;
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImEyNzM5NDA3LTA3MmQtNDM0ZS05NzAyLTA0ZmVjZTIzYWZhYyIsIm5hbWUiOiJkaHJ1diIsImlhdCI6MTc1NDQ4MjY4Mn0.qwAnqQ7TcdK7XAyvxhN49FjIy7ayeCwNtbrewEjzOj8';
+        const token = req.cookies.login_token;
 
         if (!token) {
-            return res.status(401).json({ message: 'Login required. Token not found.' });
+            return res.status(410).json({ message: 'Login required. Token not found.' });
         }
 
         // Decode token
