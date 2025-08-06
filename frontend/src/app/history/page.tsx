@@ -16,6 +16,8 @@ import { motion } from "framer-motion";
 import { useAuth } from "../pages/auth/AuthContext";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import axios from "axios";
+import { Input } from "@/components/ui/input";
 
 // Define interfaces for type safety
 interface Activity {
@@ -71,16 +73,39 @@ export default function App() {
     email: string;
   } | null>(null);
 
+  const handleUpdateProfile = async (updatedData: {
+    name: string;
+    email: string;
+  }) => {
+    try {
+      const response = await axios.put(
+        "http://localhost:4000/profile",
+        updatedData,
+        {
+          withCredentials: true, // Send cookies if auth uses sessions
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Handle success (e.g., update UI or show toast)
+      console.log("Profile updated:", response.data);
+      setProfile(response.data); // Optionally update local state
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await fetch("http://localhost:4000/profile", {
-          credentials: "include", // Ensure cookies are sent for auth
+          credentials: "include", // include cookies
         });
         if (!res.ok) throw new Error("Failed to load profile");
-
         const data = await res.json();
-        console.log(res)
+        console.log(res);
         setProfile(data); // assuming response = { name: 'John', email: 'john@example.com' }
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -89,20 +114,17 @@ export default function App() {
 
     fetchProfile();
   }, []);
-
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch("http://localhost:4000/history", {
-          method: "GET",
-          credentials: "include", // Ensure cookies are sent for auth
+        const res = await axios.get("http://localhost:4000/history", {
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },
         });
-        if (!response.ok) throw new Error("Failed to fetch history");
-        const data = await response.json();
-        setAnalysisHistory(data);
+
+        setAnalysisHistory(res.data); // assuming array of history items
       } catch (err: any) {
         setError(err.message || "Something went wrong");
       } finally {
@@ -235,18 +257,42 @@ export default function App() {
                         />
                         <AvatarFallback>{avatarFallback}</AvatarFallback>
                       </Avatar>
-                      <div className="text-center">
-                        <p className="text-lg font-semibold">
-                          {user.firstName} {user.lastName}
-                        </p>
-                        <p
-                          className={`text-sm ${
-                            darkMode ? "text-gray-400" : "text-gray-600"
-                          }`}
-                        >
-                          {user.email}
-                        </p>
+                      <div className="flex flex-col w-full max-w-sm space-y-2">
+                        <Input
+                          type="text"
+                          value={profile?.name || ""}
+                          onChange={(e) =>
+                            setProfile((prev) =>
+                              prev ? { ...prev, name: e.target.value } : prev
+                            )
+                          }
+                          placeholder="Name"
+                          className="px-3 py-2 rounded-md border border-gray-600 bg-transparent text-sm"
+                        />
+                        <Input
+                          type="email"
+                          value={profile?.email || ""}
+                          onChange={(e) =>
+                            setProfile((prev) =>
+                              prev ? { ...prev, email: e.target.value } : prev
+                            )
+                          }
+                          placeholder="Email"
+                          className="px-3 py-2 rounded-md border border-gray-600 bg-transparent text-sm"
+                        />
                       </div>
+                      <Button
+                        className="w-full max-w-xs bg-blue-500 text-white hover:bg-blue-600"
+                        onClick={() =>
+                          profile &&
+                          handleUpdateProfile({
+                            name: profile.name,
+                            email: profile.email,
+                          })
+                        }
+                      >
+                        Save Changes
+                      </Button>
                       <Button
                         variant="destructive"
                         onClick={logout}
