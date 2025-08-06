@@ -74,7 +74,9 @@ export default function App() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:4000/profile");
+        const res = await fetch("http://localhost:4000/profile", {
+          credentials: "include", // Ensure cookies are sent for auth
+        });
         if (!res.ok) throw new Error("Failed to load profile");
 
         const data = await res.json();
@@ -91,7 +93,11 @@ export default function App() {
     const fetchHistory = async () => {
       try {
         const response = await fetch("http://localhost:4000/history", {
-          credentials: "include", // Include credentials for session management
+          method: "GET",
+          credentials: "include", // Ensure cookies are sent for auth
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
         if (!response.ok) throw new Error("Failed to fetch history");
         const data = await response.json();
@@ -113,7 +119,7 @@ export default function App() {
     try {
       const response = await fetch(`http://localhost:4000/history/delete`, {
         method: "DELETE",
-        // or use "DELETE" based on your backend
+        credentials: "include", // or use "DELETE" based on your backend
         headers: {
           "Content-Type": "application/json",
         },
