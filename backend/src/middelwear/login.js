@@ -4,7 +4,7 @@ const pool = require('../connections/DB.connect.js');
 const isLoggedIn = async (req, res, next) => {
     try {
         // const token = req.cookies.login_token;
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQwODc4ODZjLTlmYTktNGQ2OC05YWVmLThmZGJiZmEwYzY0NiIsIm5hbWUiOiJEaHJ1diIsImlhdCI6MTc1NDMzMjU5OH0.BfT_O80TLjatKC-U2yBb94ZBDFYLuPhIMtELZYMvA3M';
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImEyNzM5NDA3LTA3MmQtNDM0ZS05NzAyLTA0ZmVjZTIzYWZhYyIsIm5hbWUiOiJkaHJ1diIsImlhdCI6MTc1NDQ4MjY4Mn0.qwAnqQ7TcdK7XAyvxhN49FjIy7ayeCwNtbrewEjzOj8';
 
         if (!token) {
             return res.status(401).json({ message: 'Login required. Token not found.' });

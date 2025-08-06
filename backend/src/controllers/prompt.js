@@ -1,20 +1,28 @@
-const generatePrompt = (role, languages, description) => {
+const generateResumePrompt = (resumeText, jobDescription) => {
   return `
-You are an expert tech roadmap advisor.
+You are an AI resume analyzer.
 
-Based on the role: "${role}"
-And using these technologies: [${languages.join(', ')}]
-With the description: "${description}"
+Given the following:
 
-Create a learning roadmap consisting of 5 to 7 concise and essential topics.
+Resume:
+${resumeText}
 
-Reply as an array of JSON objects, each with:
-- "title": a short roadmap step or skill
-- "detail": a brief 7–8 word explanation of what to learn
+Job Description:
+${jobDescription}
 
-Only return the JSON array. No extra explanation or formatting.
+Respond ONLY in JSON with:
+{
+  "score": <integer between 0-100>,
+  "keywords": {
+    "matched": ["term1", "term2"],
+    "missing": ["term3", "term4"]
+  },
+  "suggestions": [
+    "Improve summary",
+    "Mention more tools used in X role"
+  ]
+}
 `.trim();
 };
 
-
-module.exports = generatePrompt;
+module.exports = generateResumePrompt;
