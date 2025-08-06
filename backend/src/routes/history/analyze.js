@@ -120,9 +120,22 @@ router.post('/reanalyze', upload.single("resume"), isLoggedIn, async (req, res) 
   }
 });
 
+router.delete('/delete', isLoggedIn, async (req, res) => {
+  try {
+    const { historyId } = req.body;
 
 
+    const result = await pool.query('DELETE FROM history WHERE id = $1', [historyId]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'History entry not found or unauthorized' });
+    }
+
+    res.status(200).json({ message: 'History entry deleted' });
+  } catch (error) {
+    console.error('Error deleting history:', error);
+    res.status(500).json({ error: 'Failed to delete history entry' });
+  }
+});
 
 module.exports = router;
-
-
