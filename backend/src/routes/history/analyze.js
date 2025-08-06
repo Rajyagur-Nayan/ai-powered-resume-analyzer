@@ -6,7 +6,6 @@ const pdfParse = require("pdf-parse");
 const fs = require("fs");
 const path = require("path");
 const isLoggedIn = require('../../middelwear/login.js')
-
 const pool = require("../../connections/DB.connect.js"); // PostgreSQL pool
 const getGeminiResponse = require("../../controllers/gemini.js");
 const generatePrompt = require("../../controllers/prompt.js");
@@ -33,8 +32,8 @@ router.get('/', isLoggedIn, async (req, res) => {
       ORDER BY h.created_at DESC
     `;
 
-    const { rows } = await pool.query(query, [userId]);
-    res.status(200).json(rows);
+    const result  = await pool.query(query, [userId]);
+    res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching analyze history:', error);
     res.status(500).json({ error: 'Failed to fetch analyze history' });

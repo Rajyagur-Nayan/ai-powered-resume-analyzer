@@ -80,6 +80,7 @@ export default function App() {
         if (!res.ok) throw new Error("Failed to load profile");
 
         const data = await res.json();
+        console.log(res)
         setProfile(data); // assuming response = { name: 'John', email: 'john@example.com' }
       } catch (err) {
         console.error("Error fetching profile:", err);
