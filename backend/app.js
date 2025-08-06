@@ -15,6 +15,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/templates', express.static(path.join(__dirname, 'templates')));
 
 // routes
 app.get("/", (req, res) => {
@@ -26,5 +27,6 @@ app.use("/login", require("./src/routes/user/login.js"));
 app.use("/history", require("./src/routes/history/analyze.js"))
 app.use("/profile" , require("./src/routes/profile/profile.js"))
 app.use("/analyze", require("./src/routes/analyzer/analyze.js"));
+app.use("/templates", require("./src/routes/templates.js"));
 
 module.exports = app;
