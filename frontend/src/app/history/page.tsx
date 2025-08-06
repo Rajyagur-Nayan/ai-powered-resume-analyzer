@@ -90,7 +90,9 @@ export default function App() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch("http://localhost:4000/history");
+        const response = await fetch("http://localhost:4000/history", {
+          credentials: "include", // Include credentials for session management
+        });
         if (!response.ok) throw new Error("Failed to fetch history");
         const data = await response.json();
         setAnalysisHistory(data);
@@ -110,7 +112,8 @@ export default function App() {
   const handleDelete = async (id: number) => {
     try {
       const response = await fetch(`http://localhost:4000/history/delete`, {
-        method: "DELETE", // or use "DELETE" based on your backend
+        method: "DELETE",
+        // or use "DELETE" based on your backend
         headers: {
           "Content-Type": "application/json",
         },
