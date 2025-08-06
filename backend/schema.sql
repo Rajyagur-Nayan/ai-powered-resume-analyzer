@@ -32,9 +32,6 @@ CREATE TABLE job_descriptions (
     title VARCHAR(255),
     description TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-<<<<<<< HEAD
-);
-=======
 );
 
->>>>>>> ba0e0885acd6adc8d3e920ccd4934835ef24184d
+
