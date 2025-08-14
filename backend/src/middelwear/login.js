@@ -2,18 +2,8 @@ const jwt = require("jsonwebtoken");
 const pool = require("../connections/DB.connect.js");
 
 const isLoggedIn = async (req, res, next) => {
-<<<<<<< HEAD
   try {
     const token = req.cookies.login_token;
-    console.log(token);
-=======
-    try {
-        const token = req.cookies.login_token;
-        // console.log(token)
-        if (!token) {
-            return res.status(410).json({ message: 'Login required. Token not found.' });
-        }
->>>>>>> ce2cb8802e4b92c1202e7f2839239d430e57d26e
 
     if (!token) {
       return res

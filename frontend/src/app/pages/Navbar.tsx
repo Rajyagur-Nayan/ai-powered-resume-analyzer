@@ -5,12 +5,15 @@ import { LoginDialog } from "./auth/Login";
 import { RegisterDialog } from "./auth/Register";
 import { useAuth } from "./auth/AuthContext";
 import Link from "next/link";
+import { User } from "lucide-react";
+import { ProfileDialog } from "./ProfileDilog";
 
 const Navbar = () => {
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
   const [isRegisterDialogOpen, setIsRegisterDialogOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
 
   return (
     <div>
@@ -79,6 +82,15 @@ const Navbar = () => {
                 </Button>
               </>
             )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden md:flex cursor-pointer"
+              onClick={() => setIsProfileDialogOpen(true)}
+            >
+              <User className="h-5 w-5 text-gray-600 hover:text-blue-600" />
+              <span className="sr-only">User</span>
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -137,6 +149,17 @@ const Navbar = () => {
             >
               History
             </Link>
+            <Button
+              variant="ghost"
+              className="w-full text-gray-700 hover:text-blue-600"
+              onClick={() => {
+                setIsProfileDialogOpen(true);
+                setIsMobileMenuOpen(false); // Close mobile menu when opening dialog
+              }}
+            >
+              <User className="h-5 w-5 mr-2" />
+              User Profile
+            </Button>
 
             <div className="flex flex-col space-y-2 mt-4">
               {isAuthenticated ? (
@@ -180,6 +203,11 @@ const Navbar = () => {
       {isRegisterDialogOpen && (
         <RegisterDialog onClose={() => setIsRegisterDialogOpen(false)} />
       )}
+      {/* Profile Dialog */}
+      <ProfileDialog
+        isOpen={isProfileDialogOpen}
+        onClose={() => setIsProfileDialogOpen(false)}
+      />
     </div>
   );
 };

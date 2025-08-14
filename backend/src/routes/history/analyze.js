@@ -14,7 +14,7 @@ const upload = multer({ dest: "uploads/" });
 
 router.get("/", isLoggedIn, async (req, res) => {
   try {
-    console.log("get work")
+    console.log("get work");
     const userId = req.user.id;
 
     const query = `
@@ -24,7 +24,8 @@ router.get("/", isLoggedIn, async (req, res) => {
         r.title AS resume_title,
         r.ai_score,
         h.created_at,
-        h.action
+        h.action,
+        *
       FROM history h
       JOIN resumes r ON h.resume_id = r.id
       WHERE h.user_id = $1
@@ -39,72 +40,76 @@ router.get("/", isLoggedIn, async (req, res) => {
   }
 });
 
-router.post("/reanalyze", upload.single("resume"), isLoggedIn, async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const file = req.file;
-    const { oldResumeId } = req.body;
+router.post(
+  "/reanalyze",
+  upload.single("resume"),
+  isLoggedIn,
+  async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const file = req.file;
+      const { oldResumeId } = req.body;
 
-    if (!file)
-      return res.status(400).json({ error: "Resume file is required." });
-    if (!userId)
-      return res.status(401).json({ error: "You are not logged in." });
-    if (!oldResumeId)
-      return res.status(400).json({ error: "Old resume ID is required." });
+      if (!file)
+        return res.status(400).json({ error: "Resume file is required." });
+      if (!userId)
+        return res.status(401).json({ error: "You are not logged in." });
+      if (!oldResumeId)
+        return res.status(400).json({ error: "Old resume ID is required." });
 
-    // Delete old records
-    await pool.query("DELETE FROM history WHERE resume_id = $1", [
-      oldResumeId,
-    ]);
-    await pool.query("DELETE FROM resumes WHERE id = $1", [oldResumeId]);
+      // Delete old records
+      await pool.query("DELETE FROM history WHERE resume_id = $1", [
+        oldResumeId,
+      ]);
+      await pool.query("DELETE FROM resumes WHERE id = $1", [oldResumeId]);
 
-    // Extract text from PDF
-    const buffer = fs.readFileSync(file.path);
-    const pdfData = await pdfParse(buffer);
-    const resumeText = pdfData.text;
+      // Extract text from PDF
+      const buffer = fs.readFileSync(file.path);
+      const pdfData = await pdfParse(buffer);
+      const resumeText = pdfData.text;
 
-    const jobDescription =
-      "Frontend Developer with skills in React, JavaScript, HTML, CSS, Git, and Responsive Design.";
+      const jobDescription =
+        "Frontend Developer with skills in React, JavaScript, HTML, CSS, Git, and Responsive Design.";
 
-    const prompt = generatePrompt(resumeText, jobDescription);
-    const rawResponse = await getGeminiResponse(prompt);
-    const cleanResponse = rawResponse.trim().replace(/```json|```/g, "");
-    const { score, keywords, suggestions } = JSON.parse(cleanResponse);
+      const prompt = generatePrompt(resumeText, jobDescription);
+      const rawResponse = await getGeminiResponse(prompt);
+      const cleanResponse = rawResponse.trim().replace(/```json|```/g, "");
+      const { score, keywords, suggestions } = JSON.parse(cleanResponse);
 
-    const title = file.originalname.replace(/\.pdf$/, "");
-    const fileUrl = `/uploads/${file.filename}`;
+      const title = file.originalname.replace(/\.pdf$/, "");
+      const fileUrl = `/uploads/${file.filename}`;
 
-    const insertQuery = `
+      const insertQuery = `
       INSERT INTO resumes (user_id, title, file_url, job_description, ai_score, keywords, suggestions)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id
     `;
 
-    const result = await pool.query(insertQuery, [
-      userId,
-      title,
-      fileUrl,
-      jobDescription,
-      score,
-      keywords,
-      suggestions.join("\n"),
-    ]);
+      const result = await pool.query(insertQuery, [
+        userId,
+        title,
+        fileUrl,
+        jobDescription,
+        score,
+        keywords,
+        suggestions.join("\n"),
+      ]);
 
-    const resumeId = result.rows[0].id;
+      const resumeId = result.rows[0].id;
 
-    await pool.query(
-      `INSERT INTO history (user_id, resume_id, action) VALUES ($1, $2, $3)`,
-      [userId, resumeId, "analyze"]
-    );
+      await pool.query(
+        `INSERT INTO history (user_id, resume_id, action) VALUES ($1, $2, $3)`,
+        [userId, resumeId, "analyze"]
+      );
 
-    fs.unlinkSync(file.path); // Cleanup uploaded file
+      fs.unlinkSync(file.path); // Cleanup uploaded file
 
-    res.json({ resumeId, ai_score: score, keywords, suggestions });
-  } catch (err) {
-    console.error("Error analyzing resume:", err);
-    res.status(500).json({ error: "Internal server error." });
+      res.json({ resumeId, ai_score: score, keywords, suggestions });
+    } catch (err) {
+      console.error("Error analyzing resume:", err);
+      res.status(500).json({ error: "Internal server error." });
+    }
   }
-}
 );
 
 router.delete("/delete", isLoggedIn, async (req, res) => {
