@@ -12,9 +12,6 @@ const generatePrompt = require("../../controllers/prompt.js");
 
 const upload = multer({ dest: "uploads/" });
 
-/**
- * GET / - Fetch user's resume analysis history
- */
 router.get("/", isLoggedIn, async (req, res) => {
   try {
     const userId = req.user.id;

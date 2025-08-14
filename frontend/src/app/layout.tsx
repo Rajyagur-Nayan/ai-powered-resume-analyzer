@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "./pages/Navbar";
 import Footer from "./pages/Footer";
 import { Providers } from "./pages/auth/AuthProvider";
+import ChatToggled from "./pages/BotTarinig";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

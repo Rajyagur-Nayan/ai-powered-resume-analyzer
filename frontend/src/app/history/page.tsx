@@ -98,23 +98,6 @@ export default function App() {
   };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch("http://localhost:4000/profile", {
-          credentials: "include", // include cookies
-        });
-        if (!res.ok) throw new Error("Failed to load profile");
-        const data = await res.json();
-        console.log(res);
-        setProfile(data); // assuming response = { name: 'John', email: 'john@example.com' }
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-  useEffect(() => {
     const fetchHistory = async () => {
       try {
         const res = await axios.get("http://localhost:4000/history", {
@@ -123,7 +106,7 @@ export default function App() {
             "Content-Type": "application/json",
           },
         });
-
+        console.log(res);
         setAnalysisHistory(res.data); // assuming array of history items
       } catch (err: any) {
         setError(err.message || "Something went wrong");
@@ -131,9 +114,25 @@ export default function App() {
         setLoading(false);
       }
     };
-
     fetchHistory();
   }, []);
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     try {
+  //       const res = await fetch("http://localhost:4000/profile", {
+  //         credentials: "include", // include cookies
+  //       });
+  //       if (!res.ok) throw new Error("Failed to load profile");
+  //       const data = await res.json();
+  //       console.log(res);
+  //       setProfile(data); // assuming response = { name: 'John', email: 'john@example.com' }
+  //     } catch (err) {
+  //       console.error("Error fetching profile:", err);
+  //     }
+  //   };
+
+  //   fetchProfile();
+  // }, []);
 
   const { logout } = useAuth();
 
