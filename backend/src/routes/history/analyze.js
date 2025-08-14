@@ -14,7 +14,6 @@ const upload = multer({ dest: "uploads/" });
 
 router.get("/", isLoggedIn, async (req, res) => {
   try {
-    console.log("get work");
     const userId = req.user.id;
 
     const query = `
