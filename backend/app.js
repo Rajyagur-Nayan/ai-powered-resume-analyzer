@@ -28,5 +28,6 @@ app.use("/history", require("./src/routes/history/analyze.js"))
 app.use("/profile" , require("./src/routes/profile/profile.js"))
 app.use("/analyze", require("./src/routes/analyzer/analyze.js"));
 app.use("/templates", require("./src/routes/templates.js"));
+app.use("/chat", require("./src/routes/chat/chat.js"));
 
 module.exports = app;
