@@ -4,8 +4,7 @@ const pool = require('../connections/DB.connect.js');
 const isLoggedIn = async (req, res, next) => {
     try {
         const token = req.cookies.login_token;
-        console.log(token);
-        
+        // console.log(token)
         if (!token) {
             return res.status(410).json({ message: 'Login required. Token not found.' });
         }

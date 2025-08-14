@@ -114,6 +114,7 @@ export default function App() {
 
     fetchProfile();
   }, []);
+
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -123,7 +124,7 @@ export default function App() {
             "Content-Type": "application/json",
           },
         });
-
+        // console.log(res);
         setAnalysisHistory(res.data); // assuming array of history items
       } catch (err: any) {
         setError(err.message || "Something went wrong");
