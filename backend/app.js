@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // your frontend URL
+    origin: "https://ai-powered-resume-analyzer-delta.vercel.app/", // your frontend URL
     credentials: true, // allow cookies
   })
 );
