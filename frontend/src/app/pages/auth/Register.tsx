@@ -22,11 +22,17 @@ export function RegisterDialog({ onClose }: any) {
   const handleRegister = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      await axios.post("http://localhost:4000/signup", {
-        name,
-        email,
-        password,
-      });
+      await axios.post(
+        "http://localhost:4000/signup",
+        {
+          name,
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
       toast.success("Register Success");
     } catch (error) {
       console.log(error);

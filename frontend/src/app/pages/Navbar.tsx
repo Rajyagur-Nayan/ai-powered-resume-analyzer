@@ -48,6 +48,7 @@ const Navbar = () => {
             >
               Home
             </Link>
+
             <Link
               href="/analysis"
               className="text-gray-300 hover:text-purple-400 transition-colors"
