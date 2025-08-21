@@ -23,7 +23,7 @@ export function RegisterDialog({ onClose }: any) {
     event.preventDefault();
     try {
       await axios.post(
-        "http://localhost:4000/signup",
+        "https://ai-powered-resume-analyzer-khyg.onrender.com/signup",
         {
           name,
           email,

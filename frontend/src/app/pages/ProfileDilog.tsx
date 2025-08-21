@@ -32,7 +32,7 @@ export function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
   useEffect(() => {
     if (!isOpen) return;
 
-    fetch("http://localhost:4000/profile", {
+    fetch("https://ai-powered-resume-analyzer-khyg.onrender.com/profile", {
       method: "GET",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -51,7 +51,7 @@ export function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
   }) => {
     try {
       const response = await axios.put(
-        "http://localhost:4000/profile",
+        "https://ai-powered-resume-analyzer-khyg.onrender.com/profile",
         updatedData,
         {
           withCredentials: true,

@@ -68,18 +68,20 @@ const Analysis = () => {
       const formData = new FormData();
       formData.append("resume", selectedFile);
       formData.append("jobDescription", jobDescription);
-      const res = await fetch("http://localhost:4000/analyze", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
+      const res = await fetch(
+        "https://ai-powered-resume-analyzer-khyg.onrender.com/analyze",
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to analyze resume.");
       }
 
       const data = await res.json();
-      console.log(data.keywords);
       setMatchScore(data.ai_score || 0);
       setKeywords(data.keywords.missing || []);
       setMatchedKeywords(data.keywords.matched || []);

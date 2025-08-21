@@ -21,7 +21,7 @@ export function LoginDialog({ onClose }: any) {
     event.preventDefault();
     try {
       await axios.post(
-        "http://localhost:4000/login",
+        "https://ai-powered-resume-analyzer-khyg.onrender.com/login",
         {
           email,
           password,

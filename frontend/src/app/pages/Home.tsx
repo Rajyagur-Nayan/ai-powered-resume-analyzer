@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -23,7 +23,9 @@ export const Home = () => {
   useEffect(() => {
     const fetchWelcome = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/");
+        const response = await axios.get(
+          "https://ai-powered-resume-analyzer-khyg.onrender.com/"
+        );
         console.log("Welcome message:", response.data);
       } catch (error) {
         console.error("Error fetching welcome message:", error);
