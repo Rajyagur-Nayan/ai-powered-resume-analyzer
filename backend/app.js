@@ -5,11 +5,10 @@ const fs = require("fs");
 const bodyParser = require("body-parser");
 const app = express();
 const cookieParser = require("cookie-parser");
-
 app.use(
   cors({
-    origin: "https://ai-powered-resume-analyzer-delta.vercel.app", // your frontend URL
-    credentials: true, // allow cookies
+    origin: "https://ai-powered-resume-analyzer-delta.vercel.app",
+    credentials: true,
   })
 );
 
