@@ -16,6 +16,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const storedToken = Cookies.get("login_token");
+    console.log(storedToken);
+
     if (storedToken) {
       setToken(storedToken);
     }
