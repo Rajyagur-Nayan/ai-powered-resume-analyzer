@@ -31,8 +31,9 @@ export function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
   // Fetch profile when dialog opens
   useEffect(() => {
     if (!isOpen) return;
+    const apiUrl = process.env.URL;
 
-    fetch("https://ai-powered-resume-analyzer-khyg.onrender.com/profile", {
+    fetch(`${apiUrl}/profile`, {
       method: "GET",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -50,14 +51,12 @@ export function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
     email: string;
   }) => {
     try {
-      const response = await axios.put(
-        "https://ai-powered-resume-analyzer-khyg.onrender.com/profile",
-        updatedData,
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const apiUrl = process.env.URL;
+
+      const response = await axios.put(`${apiUrl}/profile`, updatedData, {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+      });
       console.log("Profile updated:", response.data);
       setProfile(response.data);
     } catch (error) {

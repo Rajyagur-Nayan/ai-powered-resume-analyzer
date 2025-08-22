@@ -68,14 +68,12 @@ const Analysis = () => {
       const formData = new FormData();
       formData.append("resume", selectedFile);
       formData.append("jobDescription", jobDescription);
-      const res = await fetch(
-        "https://ai-powered-resume-analyzer-khyg.onrender.com/analyze",
-        {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        }
-      );
+      const apiUrl = process.env.URL;
+      const res = await fetch(`${apiUrl}/analyze`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
 
       if (!res.ok) {
         throw new Error("Failed to analyze resume.");

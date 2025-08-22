@@ -14,7 +14,7 @@ const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
-  const [loading, setLOading] = useState(false);
+  // const [loading, setLOading] = useState(false);
 
   return (
     <div>

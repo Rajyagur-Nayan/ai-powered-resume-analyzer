@@ -23,9 +23,9 @@ export const Home = () => {
   useEffect(() => {
     const fetchWelcome = async () => {
       try {
-        const response = await axios.get(
-          "https://ai-powered-resume-analyzer-khyg.onrender.com/"
-        );
+        const apiUrl = process.env.URL;
+
+        const response = await axios.get(`${apiUrl}/`);
         console.log("Welcome message:", response.data);
       } catch (error) {
         console.error("Error fetching welcome message:", error);

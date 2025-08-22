@@ -22,8 +22,10 @@ export function RegisterDialog({ onClose }: any) {
   const handleRegister = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
+      const apiUrl = process.env.URL;
+
       await axios.post(
-        "https://ai-powered-resume-analyzer-khyg.onrender.com/signup",
+        `${apiUrl}/signup`,
         {
           name,
           email,

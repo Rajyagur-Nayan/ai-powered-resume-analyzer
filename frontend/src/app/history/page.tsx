@@ -30,15 +30,14 @@ export default function App() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get(
-          "https://ai-powered-resume-analyzer-khyg.onrender.com/history",
-          {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const apiUrl = process.env.URL;
+
+        const res = await axios.get(`${apiUrl}/history`, {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         console.log(res);
         setAnalysisHistory(res.data); // assuming array of history items
       } catch (err: any) {
@@ -53,17 +52,16 @@ export default function App() {
   // Delete handler function
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(
-        `https://ai-powered-resume-analyzer-khyg.onrender.com/history/delete`,
-        {
-          method: "DELETE",
-          credentials: "include", // or use "DELETE" based on your backend
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ historyId: id }),
-        }
-      );
+      const apiUrl = process.env.URL;
+
+      const response = await fetch(`${apiUrl}/history/delete`, {
+        method: "DELETE",
+        credentials: "include", // or use "DELETE" based on your backend
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ historyId: id }),
+      });
       if (!response.ok) throw new Error("Failed to delete history");
       console.log(response);
       toast.success("History deleted successfully!");

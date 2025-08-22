@@ -20,8 +20,10 @@ export function LoginDialog({ onClose }: any) {
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
+      const apiUrl = process.env.URL;
+
       await axios.post(
-        "https://ai-powered-resume-analyzer-khyg.onrender.com/login",
+        `${apiUrl}/login`,
         {
           email,
           password,
