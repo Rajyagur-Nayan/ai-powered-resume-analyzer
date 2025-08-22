@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 app.use(
   cors({
     origin:
-      "https://ai-powered-resume-analyzer-3h2qg62tv-rajyagur-nayans-projects.vercel.app",
+      "https://ai-powered-resume-analyzer-ac4ly890p-rajyagur-nayans-projects.vercel.app",
     credentials: true,
   })
 );
