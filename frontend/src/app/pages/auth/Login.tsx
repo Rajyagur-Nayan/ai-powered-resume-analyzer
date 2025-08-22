@@ -20,7 +20,7 @@ export function LoginDialog({ onClose }: any) {
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const apiUrl = process.env.URL;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
       await axios.post(
         `${apiUrl}/login`,

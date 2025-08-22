@@ -22,7 +22,7 @@ export function RegisterDialog({ onClose }: any) {
   const handleRegister = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const apiUrl = process.env.URL;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
       await axios.post(
         `${apiUrl}/signup`,

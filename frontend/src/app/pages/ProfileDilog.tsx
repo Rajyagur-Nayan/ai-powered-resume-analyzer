@@ -31,7 +31,7 @@ export function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
   // Fetch profile when dialog opens
   useEffect(() => {
     if (!isOpen) return;
-    const apiUrl = process.env.URL;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     fetch(`${apiUrl}/profile`, {
       method: "GET",
@@ -51,7 +51,7 @@ export function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
     email: string;
   }) => {
     try {
-      const apiUrl = process.env.URL;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
       const response = await axios.put(`${apiUrl}/profile`, updatedData, {
         withCredentials: true,

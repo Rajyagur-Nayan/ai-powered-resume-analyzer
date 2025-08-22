@@ -68,7 +68,7 @@ const Analysis = () => {
       const formData = new FormData();
       formData.append("resume", selectedFile);
       formData.append("jobDescription", jobDescription);
-      const apiUrl = process.env.URL;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       const res = await fetch(`${apiUrl}/analyze`, {
         method: "POST",
         body: formData,

@@ -30,7 +30,7 @@ export default function App() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const apiUrl = process.env.URL;
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
         const res = await axios.get(`${apiUrl}/history`, {
           withCredentials: true,
@@ -52,7 +52,7 @@ export default function App() {
   // Delete handler function
   const handleDelete = async (id: number) => {
     try {
-      const apiUrl = process.env.URL;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
       const response = await fetch(`${apiUrl}/history/delete`, {
         method: "DELETE",

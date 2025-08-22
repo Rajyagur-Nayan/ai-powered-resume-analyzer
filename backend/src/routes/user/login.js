@@ -33,12 +33,13 @@ router.post("/", async (req, res) => {
 
     const data = { id: user.id, name: user.name };
     const token = generateToken(data);
+
     res
       .status(200)
       .cookie("login_token", token, {
         httpOnly: false,
         sameSite: "none", // <-- important
-        secure: true, // <-- required in Render (HTTPS)
+        secure: false, // <-- required in Render (HTTPS)
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .json({ message: "Login successful", token, user: data });

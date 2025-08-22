@@ -23,7 +23,10 @@ export const Home = () => {
   useEffect(() => {
     const fetchWelcome = async () => {
       try {
-        const apiUrl = process.env.URL;
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        console.log("====================================");
+        console.log(apiUrl);
+        console.log("====================================");
 
         const response = await axios.get(`${apiUrl}/`);
         console.log("Welcome message:", response.data);
