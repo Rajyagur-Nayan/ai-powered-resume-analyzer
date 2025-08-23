@@ -15,13 +15,13 @@ app.use(cors({
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/templates', express.static(path.join(__dirname, 'templates')));
 
 // routes
 app.get("/", (req, res) => {
   res.send("API is running 🚀");
 });
 
+app.use('/templates', express.static(path.join(__dirname, 'templates')));
 app.use("/signup", require("./src/routes/user/signup.js"));
 app.use("/login", require("./src/routes/user/login.js"));
 app.use("/history", require("./src/routes/history/analyze.js"))
