@@ -68,7 +68,8 @@ const Analysis = () => {
       const formData = new FormData();
       formData.append("resume", selectedFile);
       formData.append("jobDescription", jobDescription);
-      const res = await fetch("http://localhost:4000/analyze", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const res = await fetch(`${apiUrl}/analyze`, {
         method: "POST",
         body: formData,
         credentials: "include",
@@ -79,7 +80,6 @@ const Analysis = () => {
       }
 
       const data = await res.json();
-      console.log(data.keywords);
       setMatchScore(data.ai_score || 0);
       setKeywords(data.keywords.missing || []);
       setMatchedKeywords(data.keywords.matched || []);

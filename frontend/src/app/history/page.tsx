@@ -30,7 +30,9 @@ export default function App() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/history", {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+        const res = await axios.get(`${apiUrl}/history`, {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
@@ -50,7 +52,9 @@ export default function App() {
   // Delete handler function
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:4000/history/delete`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      const response = await fetch(`${apiUrl}/history/delete`, {
         method: "DELETE",
         credentials: "include", // or use "DELETE" based on your backend
         headers: {

@@ -14,6 +14,7 @@ const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+  // const [loading, setLOading] = useState(false);
 
   return (
     <div>
@@ -48,6 +49,7 @@ const Navbar = () => {
             >
               Home
             </Link>
+
             <Link
               href="/analysis"
               className="text-gray-300 hover:text-purple-400 transition-colors"
