@@ -38,8 +38,8 @@ router.post("/", async (req, res) => {
       .status(200)
       .cookie("login_token", token, {
         httpOnly: false,
-        sameSite: "lax", // <-- important
-        secure: false, // <-- required in Render (HTTPS)
+        sameSite: "none", // <-- important
+        secure: true, // <-- required in Render (HTTPS)
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .json({ message: "Login successful", token, user: data });
