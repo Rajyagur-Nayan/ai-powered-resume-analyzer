@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import axios from "axios";
+import Spline from "@splinetool/react-spline";
 
 // Main App Component
 export const Home = () => {
@@ -42,45 +43,61 @@ export const Home = () => {
     // The main container for the application, setting dark mode and Inter font
     <div className="min-h-screen bg-gray-950 text-gray-50 font-inter dark">
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center py-20 px-4 text-center">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-5xl font-bold mb-4 text-gray-50"
-        >
-          AI Resume Analyzer
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-xl text-gray-400 mb-8"
-        >
-          Get instant feedback on your resume to land your dream job.
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <Link
-            href="/analysis"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg shadow-lg transition-all duration-300"
-          >
-            Get Started
-          </Link>
-        </motion.div>
-        {/* Placeholder for the resume image */}
-        <motion.img
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          src="/img1.jpeg"
-          alt="Resume illustration"
-          className="mt-12 rounded-lg shadow-xl"
-        />
-      </section>
+      <div className=" bg-gray-900 text-white relative overflow-hidden">
+        {/* Hero Section */}
+        <section className="relative flex flex-col md:flex-row items-center justify-between px-6 pt-40  max-w-7xl mx-auto">
+          {/* Left side: text */}
+          <div className="flex-1 text-center md:text-left">
+            <motion.h1
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-5xl font-bold mb-4 text-gray-50"
+            >
+              AI Resume Analyzer
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-xl text-gray-400 mb-8 max-w-xl mx-auto md:mx-0"
+            >
+              Get instant feedback on your resume to land your dream job.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <Link
+                href="/analysis"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg shadow-lg transition-all duration-300"
+              >
+                Get Started
+              </Link>
+            </motion.div>
+
+            {/* Resume Illustration Image */}
+          </div>
+
+          {/* Right side: Spline robot */}
+          <div className="flex-1 hidden  md:flex justify-center mt-12 md:mt-0 md:ml-8 h-[400px]">
+            <Spline scene="https://prod.spline.design/IW1Gc7yEt17BDjCX/scene.splinecode" />
+          </div>
+        </section>
+        <div className="md:ml-20 ml-10">
+          <motion.img
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            src="/img1.jpeg"
+            alt="Resume illustration"
+            className="mt-12 w-[95%] rounded-lg shadow-xl"
+          />
+        </div>
+      </div>
 
       {/* How It Works Section */}
       <section className="py-20 px-4 bg-gray-900">
